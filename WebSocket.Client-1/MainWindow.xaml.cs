@@ -23,7 +23,7 @@ namespace WebSocket.Client
                 Uri serverUri = new Uri("ws://localhost:5000/ws");
                 await _webSocket.ConnectAsync(serverUri, CancellationToken.None);
 
-                ChatListBox.Items.Add("-- Úspešne pripjené k serveru --");
+                ChatListBox.Items.Add("-- Úspešne pripojené k serveru --");
                 UsernameBox.IsEnabled = false;
 
                 _ = Task.Run(() => ReceiveMessages());
