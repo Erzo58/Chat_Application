@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="WebSocket.Client/WebSocket.Client.csproj" />
-  <Project Path="WebSocket.Server/WebSocket.Server.csproj" />
+  <Project Path="ChatApp.Client/ChatApp.Client.csproj" />
+  <Project Path="ChatApp.Server/ChatApp.Server.csproj" />
 </Solution>
