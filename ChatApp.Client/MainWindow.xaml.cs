@@ -13,42 +13,68 @@ namespace WebSocket.Client
         public MainWindow()
         {
             InitializeComponent();
+
+            Loaded += MainWindow_Loaded;
+        }
+
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            await ConnectToServerAsync();
         }
 
         private async void Connect_Click(object sender, RoutedEventArgs e)
         {
+            await ConnectToServerAsync();
+        }
+
+        private async Task ConnectToServerAsync()
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                return;
+            }
+
+            ConnectButton.IsEnabled = false;
+
             try
             {
-                _connection = new HubConnectionBuilder()
-                    .WithUrl("http://localhost:52492/chathub")
-                    .WithAutomaticReconnect()
-                    .Build();
+                if (_connection == null)
+                {
+                    _connection = new HubConnectionBuilder()
+                        .WithUrl("http://localhost:52492/chathub")
+                        .WithAutomaticReconnect()
+                        .Build();
 
-                _connection.On<ChatMessage>("ReceiveMessage", (message) =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    _connection.On<ChatMessage>("ReceiveMessage", (message) =>
                     {
-                        string displayMessage = $"[{message.Timestamp:HH:mm:ss}] {message.Username}: {message.Text}";
-                        ChatListBox.Items.Add(displayMessage);
-                        ChatListBox.ScrollIntoView(ChatListBox.Items[ChatListBox.Items.Count - 1]);
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            string displayMessage = $"[{DateTime.Now.ToLongTimeString()}] {message.Username}: {message.Text}";
+                            ChatListBox.Items.Add(displayMessage);
+                            ChatListBox.ScrollIntoView(ChatListBox.Items[ChatListBox.Items.Count - 1]);
+                        });
                     });
-                });
-                _connection.Closed += async (error) =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
+
+                    _connection.Closed += async (error) =>
                     {
-                        ChatListBox.Items.Add("--- Spojenie so serverom sa prerušilo ---");
-                    });
-                    await Task.CompletedTask;
-                };
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            ChatListBox.Items.Add("--- Spojenie prerušené ---");
+                            ConnectButton.IsEnabled = true;
+                        });
+                        await Task.CompletedTask;
+                    };
+                }
 
                 await _connection.StartAsync();
-
                 ChatListBox.Items.Add("--- Úspešne pripojené k serveru ---");
+
+                ConnectButton.IsEnabled = false;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Chyba pripojenia: " + ex.Message);
+                ConnectButton.IsEnabled = true;
             }
         }
 
@@ -75,6 +101,11 @@ namespace WebSocket.Client
                     MessageBox.Show("Chyba pri odosielaní: " + ex.Message);
                 }
             }
+        }
+
+        private async void Some_Typeing() { 
+            // some one typing implementation
+        
         }
     }
 }

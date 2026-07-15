@@ -12,7 +12,7 @@
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
             <TextBlock Text="Meno:" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <TextBox x:Name="UsernameBox" Width="100" Text="Client1" Margin="0,0,10,0" VerticalAlignment="Center"/>
-            <Button Content="Pripojiť na Server" Click="Connect_Click" Width="120" Padding="5"/>
+            <Button x:Name="ConnectButton" Content="Pripojiť na Server" Click="Connect_Click" Width="120" Padding="5"/>
         </StackPanel>
 
         <ListBox x:Name="ChatListBox" Grid.Row="1" Margin="0,0,0,10" Background="#F0F0F0"/>
